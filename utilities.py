@@ -56,7 +56,7 @@ def initialize_values():
     document_store = FAISSDocumentStore.load("bms")
     retriever = EmbeddingRetriever(
         document_store=document_store,
-        embedding_model='text-search-Davinci-query-001',
+        embedding_model='text-search-davinci-query-001',
         model_format='openai',
         api_key='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'
     )
