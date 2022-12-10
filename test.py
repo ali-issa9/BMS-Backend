@@ -1,5 +1,5 @@
 from haystack.document_stores import FAISSDocumentStore
-document_store = FAISSDocumentStore.load("bms1")
+document_store = FAISSDocumentStore.load("")
 
 
 for doc in document_store:

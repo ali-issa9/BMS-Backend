@@ -53,12 +53,12 @@ def extract_text_from_pdf(pdf_file: str) -> [str]:
 
 def initialize_values():
 
-    document_store = FAISSDocumentStore.load("bms1")
+    document_store = FAISSDocumentStore.load("bms")
     retriever = EmbeddingRetriever(
         document_store=document_store,
-        embedding_model='text-search-ada-query-001',
+        embedding_model='text-search-Davinci-query-001',
         model_format='openai',
-        api_key='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'
+        api_key='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'
     )
 
     # reader = FARMReader(model_name_or_path='deepset/roberta-base-squad2',
@@ -68,13 +68,13 @@ def initialize_values():
     #                     no_ans_boost=0,
     #                     use_gpu=False)
 
-    reader = FARMReader(model_name_or_path="distilbert-base-uncased-distilled-squad",
+    reader = FARMReader(model_name_or_path="ahotrod/albert_xxlargev1_squad2_512",
                         context_window_size=1500,
                         max_seq_len=512,
                         return_no_answer=True,
                         no_ans_boost=0,
                         confidence_threshold=0.56,
-                        use_gpu=True)
+                        use_gpu=False)
 
 
     return [retriever,reader]
@@ -124,10 +124,14 @@ def list_of_short_answer(answers):
 
         meta_data = meta_data[:-1]
 
-        if meta_data[0] in list_of_short_context.keys():
-                list_of_short_context[meta_data[0]] = list_of_short_context[meta_data[0]] + '/' + str(info.context)
-        else:
-                list_of_short_context[meta_data[0]] = info.context
+        print("metaaaa",meta_data)
+
+        if meta_data:
+
+            if meta_data[0] in list_of_short_context.keys():
+                    list_of_short_context[meta_data[0]] = list_of_short_context[meta_data[0]] + '/' + str(info.context)
+            else:
+                    list_of_short_context[meta_data[0]] = info.context
 
 
     return highlight(list_of_short_context)
@@ -161,7 +165,7 @@ def backward_sentences(sentences,id):
 
 
 def get_final_answers(answers):
-    document_store = FAISSDocumentStore.load("bms1")
+    document_store = FAISSDocumentStore.load("bms")
     sentences = {}
     for doc in document_store:
         sentences[doc.meta["number_id"]] = doc.content
@@ -208,8 +212,8 @@ def get_final_answers(answers):
                 max_occurence_of_page = max(possible_pages, key=possible_pages.count)
                 answer_info.append({"context": update_context ,"url_highlighted": url_to_doc_mapping[doc_name] + "#page=" + str(max_occurence_of_page), "meta_data": meta_data, "page": max_occurence_of_page,"idn":Num,"score":str(info.score)[:5]})
                 Num+=1
-            print("context--------", context)
-            print("updarteddddd_context---------- ",update_context)
+
+
             
 
 

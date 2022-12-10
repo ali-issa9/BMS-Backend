@@ -5,7 +5,7 @@ from haystack.document_stores import FAISSDocumentStore
 # from haystack.document_stores import MilvusDocumentStore
 # document_store = MilvusDocumentStore()
 
-document_store = FAISSDocumentStore(faiss_index_factory_str="Flat", similarity='cosine',embedding_dim=1024)
+document_store = FAISSDocumentStore(faiss_index_factory_str="Flat", similarity='cosine',embedding_dim=12288)
 doc_dir = './documents/'
 
 def split_word_into_paragraphs(word):
@@ -108,9 +108,9 @@ print("loading retriever------")
 
 retriever = EmbeddingRetriever(
     document_store=document_store,
-    embedding_model='text-search-ada-doc-001',
+    embedding_model='text-search-davinci-doc-001',
     model_format='openai',
-    api_key='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'
+    api_key='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'
 
 )
 
@@ -120,6 +120,6 @@ document_store.update_embeddings(
     batch_size=100
 )
 
-document_store.save("bms1")
+document_store.save("bms")
 
 
