@@ -53,7 +53,7 @@ def extract_text_from_pdf(pdf_file: str) -> [str]:
 
 def initialize_values():
 
-    document_store = FAISSDocumentStore.load("32322312")
+    document_store = FAISSDocumentStore.load("demo")
     retriever = EmbeddingRetriever(
         document_store=document_store,
         embedding_model='text-search-ada-query-001',
