@@ -53,28 +53,29 @@ def extract_text_from_pdf(pdf_file: str) -> [str]:
 
 def initialize_values():
 
-    document_store = FAISSDocumentStore.load("bms")
+    document_store = FAISSDocumentStore.load("32322312")
     retriever = EmbeddingRetriever(
         document_store=document_store,
-        embedding_model='text-search-davinci-query-001',
+        embedding_model='text-search-ada-query-001',
         model_format='openai',
-        api_key='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'
+        api_key='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'
     )
 
-    # reader = FARMReader(model_name_or_path='deepset/roberta-base-squad2',
-    #                     context_window_size=1500,
-    #                     max_seq_len=500,
-    #                     return_no_answer=True,
-    #                     no_ans_boost=0,
-    #                     use_gpu=False)
-
-    reader = FARMReader(model_name_or_path="ahotrod/albert_xxlargev1_squad2_512",
+    reader = FARMReader(model_name_or_path='deepset/roberta-base-squad2',
                         context_window_size=1500,
                         max_seq_len=512,
                         return_no_answer=True,
+                        confidence_threshold=0.50,
                         no_ans_boost=0,
-                        confidence_threshold=0.56,
                         use_gpu=False)
+
+    # reader = FARMReader(model_name_or_path="ahotrod/albert_xxlargev1_squad2_512",
+    #                     context_window_size=1500,
+    #                     max_seq_len=512,
+    #                     return_no_answer=True,
+    #                     no_ans_boost=0,
+    #                     confidence_threshold=0.56,
+    #                     use_gpu=False)
 
 
     return [retriever,reader]
@@ -165,7 +166,7 @@ def backward_sentences(sentences,id):
 
 
 def get_final_answers(answers):
-    document_store = FAISSDocumentStore.load("bms")
+    document_store = FAISSDocumentStore.load("demo")
     sentences = {}
     for doc in document_store:
         sentences[doc.meta["number_id"]] = doc.content

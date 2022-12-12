@@ -28,7 +28,8 @@ def ask():
     if request.method == 'POST':
         PIPELINE = ExtractiveQAPipeline(retriever=reader_retriever[0], reader=reader_retriever[1])
         query = request.json['question']
-        pred = PIPELINE.run(query=query, params={"Retriever": {"top_k": 5}, "Reader": {"top_k": 5}})
+        pred = PIPELINE.run(query=query, params={"Retriever": {"top_k": 10}, "Reader": {"top_k": 5}})
+        print(pred)
         return jsonpickle.encode(get_final_answers(pred['answers']))
 
 @app.route('/delete/blob-file', methods=['DELETE'])
