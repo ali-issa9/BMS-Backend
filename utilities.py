@@ -53,12 +53,13 @@ def extract_text_from_pdf(pdf_file: str) -> [str]:
 
 def initialize_values():
 
-    document_store = FAISSDocumentStore.load("demo")
+    document_store = FAISSDocumentStore.load("bms")
     retriever = EmbeddingRetriever(
         document_store=document_store,
-        embedding_model='text-search-ada-query-001',
-        model_format='openai',
-        api_key='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'
+        embedding_model='text-embedding-ada-002',
+        max_seq_len=8191,
+        scale_score=False,
+        api_key='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'
     )
 
     reader = FARMReader(model_name_or_path='deepset/roberta-base-squad2',
@@ -68,14 +69,6 @@ def initialize_values():
                         confidence_threshold=0.50,
                         no_ans_boost=0,
                         use_gpu=False)
-
-    # reader = FARMReader(model_name_or_path="ahotrod/albert_xxlargev1_squad2_512",
-    #                     context_window_size=1500,
-    #                     max_seq_len=512,
-    #                     return_no_answer=True,
-    #                     no_ans_boost=0,
-    #                     confidence_threshold=0.56,
-    #                     use_gpu=False)
 
 
     return [retriever,reader]
@@ -125,14 +118,17 @@ def list_of_short_answer(answers):
 
         meta_data = meta_data[:-1]
 
-        print("metaaaa",meta_data)
+        # print("metaaaa",meta_data)
 
         if meta_data:
 
             if meta_data[0] in list_of_short_context.keys():
-                    list_of_short_context[meta_data[0]] = list_of_short_context[meta_data[0]] + '/' + str(info.context)
+                    # list_of_short_context[meta_data[0]] = list_of_short_context[meta_data[0]] + '/' + str(info.context)
+                     list_of_short_context[meta_data[0]] = list_of_short_context[meta_data[0]] + '/' + str(info.content)
+
             else:
-                    list_of_short_context[meta_data[0]] = info.context
+                    # list_of_short_context[meta_data[0]] = info.context
+                    list_of_short_context[meta_data[0]] = info.content
 
 
     return highlight(list_of_short_context)
@@ -166,19 +162,16 @@ def backward_sentences(sentences,id):
 
 
 def get_final_answers(answers):
-    document_store = FAISSDocumentStore.load("demo")
+    document_store = FAISSDocumentStore.load("bms")
     sentences = {}
     for doc in document_store:
         sentences[doc.meta["number_id"]] = doc.content
 
-
     url_to_doc_mapping = list_of_short_answer(answers)
     answer_info = []
 
-
     Num=0
 
-    
     for info in answers:
         meta_data = []
         id=0
@@ -194,8 +187,10 @@ def get_final_answers(answers):
 
             extracted_text = extract_text_from_pdf(doc_name)
 
-        if info.context:
-            context = info.context
+        # if info.context:
+        if info.content:
+            # context = info.context
+            context = info.content
             list_sentences = extract_sentence_from_context(context, 4)
             possible_pages = []
             for sentence in list_sentences:
@@ -206,12 +201,12 @@ def get_final_answers(answers):
                     continue
 
 
-            update_context=backward_sentences(sentences,id)
+            # update_context=backward_sentences(sentences,id)
 
 
             if possible_pages and doc_name in url_to_doc_mapping:
                 max_occurence_of_page = max(possible_pages, key=possible_pages.count)
-                answer_info.append({"context": update_context ,"url_highlighted": url_to_doc_mapping[doc_name] + "#page=" + str(max_occurence_of_page), "meta_data": meta_data, "page": max_occurence_of_page,"idn":Num,"score":str(info.score)[:5]})
+                answer_info.append({"context": info.content ,"url_highlighted": url_to_doc_mapping[doc_name] + "#page=" + str(max_occurence_of_page), "meta_data": meta_data, "page": max_occurence_of_page,"idn":Num,"score":str(info.score)[:5]})
                 Num+=1
 
 

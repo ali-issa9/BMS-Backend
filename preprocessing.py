@@ -52,9 +52,7 @@ for e in list_documents:
 
    for s in sentences:
        new_list = []
-
-
-       if len(s) >= 400:
+       if len(s) >= 800:
            new_list = s.split(', ')
            for l in new_list:
              print("l--- ",l,l.endswith(". "))
@@ -67,7 +65,7 @@ for e in list_documents:
 
    sentences = new_sentences
    while True:
-      sentences = combine_sentences(sentences,400)
+      sentences = combine_sentences(sentences,800)
       new_size = len(sentences)
 
       if new_size == old_size:
@@ -75,17 +73,18 @@ for e in list_documents:
       else:
           old_size = len(sentences)
 
-   for S in sentences:
-       print(S)
-       print(len(S))
+   # for S in sentences:
+   #     # print(S)
+   #     print(len(S))
 
    list_of_paragraphs.append([sentences,e[0],e[1]])
 
-print(list_of_paragraphs)
+# print(list_of_paragraphs)
 
-print("list_of_paraph",list_of_paragraphs)
+# print("list_of_paraph",list_of_paragraphs)
 
 for e in list_of_paragraphs:
+    print("sentence :",e,"\n")
     print('len',len(e[0]))
 
 dicts = []
@@ -105,21 +104,19 @@ document_store.write_documents(dicts)
 
 print("loading retriever------")
 
-
 retriever = EmbeddingRetriever(
     document_store=document_store,
-    embedding_model='text-search-ada-doc-001',
-    model_format='openai',
-    api_key='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'
-
+    embedding_model='text-embedding-ada-002',
+    max_seq_len=8191,
+    scale_score=False,
+    api_key='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'
 )
-
 
 document_store.update_embeddings(
     retriever,
     batch_size=100
 )
 
-document_store.save("demo")
+document_store.save("bms")
 
 

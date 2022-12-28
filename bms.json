@@ -1,1 +1,1 @@
-{"faiss_index_factory_str": "Flat", "similarity": "cosine", "embedding_dim": 12288}
+{"faiss_index_factory_str": "Flat", "similarity": "cosine", "embedding_dim": 1024}

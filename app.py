@@ -5,6 +5,8 @@ from utilities import *
 import jsonpickle
 from haystack.utils import print_answers
 
+from haystack.pipelines import DocumentSearchPipeline
+from haystack.utils import print_documents
 
 
 app = Flask(__name__)
@@ -26,11 +28,19 @@ def hello_world():
 @cross_origin()
 def ask():
     if request.method == 'POST':
-        PIPELINE = ExtractiveQAPipeline(retriever=reader_retriever[0], reader=reader_retriever[1])
+        # PIPELINE = ExtractiveQAPipeline(retriever=reader_retriever[0], reader=reader_retriever[1])
+
         query = request.json['question']
-        pred = PIPELINE.run(query=query, params={"Retriever": {"top_k": 10}, "Reader": {"top_k": 5}})
-        print(pred)
-        return jsonpickle.encode(get_final_answers(pred['answers']))
+        search_pipe = DocumentSearchPipeline(reader_retriever[0])
+        pred=search_pipe.run(query=query, params={"Retriever": {"top_k": 5}})
+        final_asnwer= jsonpickle.encode(get_final_answers(pred['documents']))
+        print("final answer",final_asnwer)
+
+        return final_asnwer
+
+        # pred = PIPELINE.run(query=query, params={"Retriever": {"top_k": 10}, "Reader": {"top_k": 5}})
+        # print(pred)
+        # return jsonpickle.encode(get_final_answers(pred['answers']))
 
 @app.route('/delete/blob-file', methods=['DELETE'])
 def delete_blob_files():
